@@ -1,5 +1,6 @@
 import java.io.PrintWriter;
 import java.util.Iterator;
+import java.util.Stack;
 
 /**
  * Simple binary trees.
@@ -50,6 +51,14 @@ public class BinaryTree<T> implements Iterable<T> {
   public void dump(PrintWriter pen) {
     dump(pen, root, "");
   } // dump(PrintWriter)
+  
+  /**
+   * Print portion of tree in string
+   * Depth first, Preorder, Left to right
+   */
+  public void elements01(PrintWriter pen) {
+    elements01(pen, root);
+  } // element01(PrintWriter pen)
 
   /**
    * Get an iterator for the tree.
@@ -86,6 +95,23 @@ public class BinaryTree<T> implements Iterable<T> {
       } // if has children
     } // else
   } // dump
+  
+  /**
+   * Print portion of tree in string
+   * Depth first, Preorder, Left to right
+   */
+  void elements01(PrintWriter pen, BinaryTreeNode<T> node) {
+    if (node != null) {
+      pen.print(node.value + " ");
+      if (node.left != null) {
+        elements01(pen, node.left);
+      } // if
+      if (node.right != null) {
+        elements01(pen, node.right);
+      } // if
+    } // if not null
+    pen.flush();
+  } // elements01(PrintWriter pen, BinaryTreeNode<T> node)
 
   /**
    * Build a tree from a subarray from lb (inclusive) to ub (exclusive).
@@ -102,4 +128,39 @@ public class BinaryTree<T> implements Iterable<T> {
     } // if/else
   } // makeTree(T[], int, int)
 
+  /**
+   * Print all of the elements in some order or other.
+   * 
+   * Note: We are trying to avoid recursion.
+   */
+  public void print(PrintWriter pen) {
+    // A collection of the remaining things to print
+    Stack<Object> remaining = new Stack<Object>();
+    remaining.push(this.root);
+    // Invariants: 
+    //   remaining only contains Strings or Nodes
+    //   All valuess in the tree are either
+    //     (a) already printed
+    //     (b) in remaining
+    //     (c) in or below a node in remaining
+    while (!remaining.isEmpty()) {
+      Object next = remaining.pop();
+      if (next instanceof BinaryTreeNode<?>) {
+        @SuppressWarnings("unchecked")
+        BinaryTreeNode<T> node = (BinaryTreeNode<T>) next;
+        if (node.right!= null) {
+          remaining.push(node.right);
+        } // if (node.right!= null)
+        if (node.left != null) {
+          remaining.push(node.left);
+        } // if (node.left != null)
+        remaining.push(node.value);
+      } else {
+        pen.print(next);
+        pen.print(" ");
+      } // if/else
+    } // while
+    pen.println();
+  } // print(PrintWriter)
+  
 } // class BinaryTree
